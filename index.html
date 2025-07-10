@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WINK 制作タスクカレンダー</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: auto; padding: 20px; }
+    .today { background: #d2f8d2; padding: 4px; border-radius: 4px; }
+    h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <h1>WINK 制作タスクカレンダー</h1>
+
+  <div id="calendar">
+
+    <h2 class="date">7/11（金）</h2>
+    <ul>
+      <li>PV全体構成メモ作成</li>
+      <li>ナレーション台本ドラフト作成</li>
+    </ul>
+
+    <h2 class="date">7/12（土）</h2>
+    <ul>
+      <li>ナレーション台本ブラッシュアップ</li>
+      <li>PV使用Live2Dキャラクターリスト作成</li>
+    </ul>
+
+    <!-- ここに全タスクを同様に記述 -->
+
+  </div>
+
+  <script>
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const todayString = `${month}/${date}`;
+
+    document.querySelectorAll('.date').forEach(el => {
+      if(el.innerText.includes(todayString)){
+        el.classList.add('today');
+      }
+    });
+  </script>
+
+</body>
+</html>
