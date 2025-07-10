@@ -5,23 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WINK 制作タスクカレンダー</title>
   <style>
-    body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: auto; padding: 20px; }
-    button { margin: 5px; padding: 10px; }
-    .task-section { display: none; }
-    .active { display: block; }
+    body { margin: 0; font-family: sans-serif; }
+    .container { display: flex; }
+
+    /* Sidebar (タスク一覧) */
+    .sidebar {
+      position: fixed;
+      top: 0; left: -300px;
+      width: 300px;
+      height: 100%;
+      background: #f0f0f0;
+      overflow-y: auto;
+      transition: left 0.3s ease;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .sidebar.active { left: 0; }
+
+    /* Main (カレンダー) */
+    .main {
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+      padding: 20px;
+      flex: 1;
+    }
+    .sidebar.active + .main { margin-left: 300px; }
+
+    button.toggle {
+      position: fixed;
+      top: 10px; left: 10px;
+      z-index: 1100;
+      padding: 10px 15px;
+    }
+
+    h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    ul { padding-left: 20px; }
   </style>
 </head>
 <body>
-  <h1>WINK 制作タスク管理</h1>
 
-  <!-- ボタン群 -->
-  <div>
-    <button onclick="showSection('calendar')">カレンダー表示</button>
-    <button onclick="showSection('list')">タスク一覧</button>
-  </div>
+  <!-- トグルボタン -->
+  <button class="toggle" onclick="toggleSidebar()">タスク一覧</button>
 
-  <!-- カレンダーセクション -->
-  <div id="calendar" class="task-section active">
+  <!-- サイドバー（タスク一覧） -->
+  <div class="sidebar" id="sidebar">
+    <h2>📝 タスク一覧</h2>
+<h3>🔷 構成・シナリオ</h3>
+<ul>
+  <li>PV全体構成メモ作成（尺、カット割り、キャッチコピー）</li>
+  <li>ナレーション台本ドラフト作成</li>
+  <li>ナレーション台本ブラッシュアップ</li>
+</ul>
+
+<h3>🔷 素材準備</h3>
+<ul>
+  <li>PV使用Live2Dキャラクターリスト作成（ウィンク表情差分含む）</li>
+  <li>PV使用背景素材リストアップ</li>
+  <li>PV背景素材収集（既存 or 仮差し込み）</li>
+</ul>
+
+<h3>🔷 音関連</h3>
+<ul>
+  <li>BGM候補選定</li>
+  <li>SE候補選定</li>
+  <li>PV BGM仮当てテスト</li>
+</ul>
+
+<h3>🔷 Live2D</h3>
+<ul>
+  <li>ウィンク立ち絵線画</li>
+  <li>ウィンク立ち絵塗り</li>
+  <li>ウィンクパーツ分け</li>
+  <li>ウィンクLive2Dモデリング</li>
+  <li>ウィンク表情差分作成（喜怒哀楽）</li>
+  <li>Live2D動作テスト</li>
+</ul>
+
+<h3>🔷 編集</h3>
+<ul>
+  <li>PV編集ソフトプロジェクト準備</li>
+  <li>PVコンテ作成</li>
+  <li>PV編集1st ver作成</li>
+  <li>ナレーション仮収録</li>
+  <li>PV演出エフェクト追加</li>
+  <li>PV編集最終チェック</li>
+  <li>PVサムネイル作成</li>
+</ul>
+
+<h3>🔷 公開準備</h3>
+<ul>
+  <li>公開告知文ドラフト作成</li>
+  <li>公開告知文ブラッシュアップ</li>
+  <li>公開告知画像素材準備</li>
+  <li>公開予約投稿設定</li>
+  <li>PV公開</li>
+</ul>
+
+<h3>💻 体験版（1章）タスク（8月後半〜）</h3>
+
+<h4>🔷 Live2D</h4>
+<ul>
+  <li>レック立ち絵線画</li>
+  <li>レック立ち絵塗り</li>
+  <li>レックパーツ分け</li>
+  <li>レックLive2Dモデリング</li>
+  <li>レック表情差分作成</li>
+</ul>
+
+<h4>🔷 シナリオ・演出</h4>
+<ul>
+  <li>1章テキスト最終調整</li>
+  <li>1章チュートリアル仕様確認</li>
+  <li>瞬きギミック仕様書作成</li>
+  <li>瞬きギミック仮実装</li>
+  <li>瞬きギミック動作テスト</li>
+</ul>
+
+<h4>🔷 UI</h4>
+<ul>
+  <li>UIデザインドラフト作成</li>
+  <li>UIパーツ制作</li>
+  <li>UI配置テスト</li>
+</ul>
+
+<h4>🔷 テストプレイ</h4>
+<ul>
+  <li>体験版通しテスト1回目</li>
+  <li>バグ修正</li>
+  <li>テストプレイヤー募集</li>
+  <li>フィードバック対応</li>
+</ul>
+
+<h4>🔷 公開準備</h4>
+<ul>
+  <li>体験版公開ページ作成（itch.ioなど）</li>
+  <li>スクリーンショット撮影</li>
+  <li>公開告知投稿作成</li>
+</ul>  </div>
+
+  <!-- メイン（カレンダー） -->
+  <div class="main">
    <h2>📅 カレンダー</h2>
 
 <h3>✅ 7月</h3>
@@ -248,110 +372,9 @@
 </ul>
   </div>
 
-  <!-- タスク一覧セクション -->
-  <div id="list" class="task-section">
- <h2>📝 タスク一覧</h2>
-
-<h3>🔷 構成・シナリオ</h3>
-<ul>
-  <li>PV全体構成メモ作成（尺、カット割り、キャッチコピー）</li>
-  <li>ナレーション台本ドラフト作成</li>
-  <li>ナレーション台本ブラッシュアップ</li>
-</ul>
-
-<h3>🔷 素材準備</h3>
-<ul>
-  <li>PV使用Live2Dキャラクターリスト作成（ウィンク表情差分含む）</li>
-  <li>PV使用背景素材リストアップ</li>
-  <li>PV背景素材収集（既存 or 仮差し込み）</li>
-</ul>
-
-<h3>🔷 音関連</h3>
-<ul>
-  <li>BGM候補選定</li>
-  <li>SE候補選定</li>
-  <li>PV BGM仮当てテスト</li>
-</ul>
-
-<h3>🔷 Live2D</h3>
-<ul>
-  <li>ウィンク立ち絵線画</li>
-  <li>ウィンク立ち絵塗り</li>
-  <li>ウィンクパーツ分け</li>
-  <li>ウィンクLive2Dモデリング</li>
-  <li>ウィンク表情差分作成（喜怒哀楽）</li>
-  <li>Live2D動作テスト</li>
-</ul>
-
-<h3>🔷 編集</h3>
-<ul>
-  <li>PV編集ソフトプロジェクト準備</li>
-  <li>PVコンテ作成</li>
-  <li>PV編集1st ver作成</li>
-  <li>ナレーション仮収録</li>
-  <li>PV演出エフェクト追加</li>
-  <li>PV編集最終チェック</li>
-  <li>PVサムネイル作成</li>
-</ul>
-
-<h3>🔷 公開準備</h3>
-<ul>
-  <li>公開告知文ドラフト作成</li>
-  <li>公開告知文ブラッシュアップ</li>
-  <li>公開告知画像素材準備</li>
-  <li>公開予約投稿設定</li>
-  <li>PV公開</li>
-</ul>
-
-<h3>💻 体験版（1章）タスク（8月後半〜）</h3>
-
-<h4>🔷 Live2D</h4>
-<ul>
-  <li>レック立ち絵線画</li>
-  <li>レック立ち絵塗り</li>
-  <li>レックパーツ分け</li>
-  <li>レックLive2Dモデリング</li>
-  <li>レック表情差分作成</li>
-</ul>
-
-<h4>🔷 シナリオ・演出</h4>
-<ul>
-  <li>1章テキスト最終調整</li>
-  <li>1章チュートリアル仕様確認</li>
-  <li>瞬きギミック仕様書作成</li>
-  <li>瞬きギミック仮実装</li>
-  <li>瞬きギミック動作テスト</li>
-</ul>
-
-<h4>🔷 UI</h4>
-<ul>
-  <li>UIデザインドラフト作成</li>
-  <li>UIパーツ制作</li>
-  <li>UI配置テスト</li>
-</ul>
-
-<h4>🔷 テストプレイ</h4>
-<ul>
-  <li>体験版通しテスト1回目</li>
-  <li>バグ修正</li>
-  <li>テストプレイヤー募集</li>
-  <li>フィードバック対応</li>
-</ul>
-
-<h4>🔷 公開準備</h4>
-<ul>
-  <li>体験版公開ページ作成（itch.ioなど）</li>
-  <li>スクリーンショット撮影</li>
-  <li>公開告知投稿作成</li>
-</ul>
-  </div>
-
   <script>
-    function showSection(id) {
-      document.querySelectorAll('.task-section').forEach(section => {
-        section.classList.remove('active');
-      });
-      document.getElementById(id).classList.add('active');
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
     }
   </script>
 
