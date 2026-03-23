@@ -2,381 +2,837 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WINK 制作タスクカレンダー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naro studio</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
-    body { margin: 0; font-family: sans-serif; }
-    .container { display: flex; }
+    :root {
+      --bg: #f8f8f8;
+      --text: #2f3443;
+      --muted: #7f8798;
+      --line: #dfe3ea;
+      --card-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+      --card-shadow-hover: 0 14px 30px rgba(0, 0, 0, 0.1);
+      --tag-border: #cfd5df;
+      --active: #2f3443;
+    }
 
-    /* Sidebar (タスク一覧) */
-    .sidebar {
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'M PLUS 1p', sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 44px 24px 120px;
+      text-align: center;
+      color: var(--text);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Comfortaa', cursive;
+      font-size: clamp(42px, 5vw, 64px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #222a3b;
+    }
+
+    .caption {
+      margin: 24px auto 0;
+      max-width: 760px;
+      font-size: 15px;
+      line-height: 1.95;
+      color: #4f5668;
+    }
+
+    hr {
+      border: none;
+      height: 4px;
+      width: min(640px, calc(100% - 64px));
+      background: #d8dde5;
+      margin: 28px auto 34px;
+      border-radius: 999px;
+    }
+
+    .filter-wrap {
+      width: min(980px, 100%);
+      margin: 0 auto 34px;
+      background: #fbfbfc;
+      border: 2px solid #dbe0e8;
+      border-radius: 28px;
+      padding: 24px 28px;
+      box-shadow: 0 8px 18px rgba(80, 90, 120, 0.03);
+    }
+
+    .tags {
+      margin: 0;
+    }
+
+    .tags + .tags {
+      margin-top: 14px;
+    }
+
+    .tag-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 9px 18px;
+      margin: 5px 6px;
+      border: 2px solid var(--tag-border);
+      border-radius: 999px;
+      background: #fff;
+      color: #485064;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s ease;
+      font-size: 15px;
+      line-height: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .tag-btn:hover {
+      transform: translateY(-1px);
+      border-color: #bfc7d4;
+    }
+
+    .genre-btn {
+      min-width: 96px;
+      font-weight: 700;
+    }
+
+    .tag-btn.active {
+      background: var(--active);
+      border-color: var(--active);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 220px));
+      gap: 22px;
+      justify-content: center;
+      width: min(1240px, 100%);
+      margin: 0 auto;
+    }
+
+    .track {
+      background: #fff;
+      border: none;
+      border-radius: 22px;
+      width: 220px;
+      padding: 16px 16px 18px;
+      cursor: pointer;
+      position: relative;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      text-align: center;
+    }
+
+    .track:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .track.playing {
+      outline: 2px solid #ffd66b;
+      outline-offset: 0;
+    }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .play-btn {
+      width: 56px;
+      height: 56px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #25304a;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .play-btn::before {
+      content: "▶";
+      transform: translateX(1px);
+    }
+
+    .track-title {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #2d3342;
+      word-break: keep-all;
+    }
+
+    .duration {
+      display: block;
+      position: static;
+      transform: none;
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .playing-animation {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #8ddc84;
+      animation: blink 1s infinite;
+      box-shadow: 0 0 0 6px rgba(141, 220, 132, 0.14);
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0.2; }
+    }
+
+    audio {
+      display: none;
+    }
+
+    .thumb-1  { background: linear-gradient(135deg, #9fe1ef 0%, #e8c8e9 100%); }
+    .thumb-2  { background: linear-gradient(135deg, #f6b9ba 0%, #f0b06c 100%); }
+    .thumb-3  { background: linear-gradient(135deg, #ff972f 0%, #ff6c62 100%); }
+    .thumb-4  { background: linear-gradient(135deg, #efe17d 0%, #efd6ab 100%); }
+    .thumb-5  { background: linear-gradient(135deg, #a7a3f0 0%, #c0a8ef 100%); }
+    .thumb-6  { background: linear-gradient(135deg, #67dfbc 0%, #b6a6f2 100%); }
+    .thumb-7  { background: linear-gradient(135deg, #78e1b2 0%, #79c7f5 100%); }
+    .thumb-8  { background: linear-gradient(135deg, #ff6a70 0%, #ff9d2d 100%); }
+    .thumb-9  { background: linear-gradient(135deg, #e596d8 0%, #b86ceb 100%); }
+    .thumb-10 { background: linear-gradient(135deg, #2e6df3 0%, #4695f5 100%); }
+    .thumb-11 { background: linear-gradient(135deg, #f2a9b0 0%, #dcb8ff 100%); }
+    .thumb-12 { background: linear-gradient(135deg, #8fd7e8 0%, #98f0d4 100%); }
+
+    .link-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
       position: fixed;
-      top: 0; left: -300px;
-      width: 300px;
-      height: 100%;
-      background: #f0f0f0;
-      overflow-y: auto;
-      transition: left 0.3s ease;
-      padding: 20px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      z-index: 1000;
+      bottom: 62px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      z-index: 10;
+      flex-wrap: wrap;
+      padding: 0 16px;
     }
-    .sidebar.active { left: 0; }
 
-    /* Main (カレンダー) */
-    .main {
-      margin-left: 0;
-      transition: margin-left 0.3s ease;
-      padding: 20px;
-      flex: 1;
+    .link-buttons a {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+      font-size: 14px;
     }
-    .sidebar.active + .main { margin-left: 300px; }
 
-    button.toggle {
+    .link-buttons a.commission {
+      background: #4FC3F7;
+    }
+
+    .link-buttons a.commission:hover {
+      background: #29B6F6;
+    }
+
+    .link-buttons a.main-site {
+      background: #ffb31a;
+    }
+
+    .link-buttons a.main-site:hover {
+      background: #f6a400;
+    }
+
+    footer {
       position: fixed;
-      top: 10px; left: 10px;
-      z-index: 1100;
-      padding: 10px 15px;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #88cc7a;
+      color: #fff;
+      padding: 10px 0;
+      font-size: 14px;
+      z-index: 9;
     }
 
-    h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-    ul { padding-left: 20px; }
+    @media (max-width: 1240px) {
+      .grid {
+        grid-template-columns: repeat(4, minmax(0, 220px));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: repeat(3, minmax(0, 220px));
+      }
+
+      .filter-wrap {
+        padding: 20px 18px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 32px 16px 140px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .caption {
+        font-size: 14px;
+      }
+
+      hr {
+        width: calc(100% - 24px);
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        width: 100%;
+      }
+
+      .track {
+        width: 100%;
+      }
+
+      .filter-wrap {
+        border-radius: 20px;
+      }
+
+      .tag-btn {
+        font-size: 14px;
+        min-height: 40px;
+        padding: 8px 14px;
+      }
+
+      .genre-btn {
+        min-width: 84px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .track-title {
+        min-height: auto;
+      }
+
+      .link-buttons {
+        bottom: 72px;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
 <body>
+  <h1>Naro studio</h1>
 
-  <!-- トグルボタン -->
-  <button class="toggle" onclick="toggleSidebar()">タスク一覧</button>
+  <p class="caption">
+    なろが制作した楽曲を視聴できるサイトです。<br>
+    タグ検索機能もございますので、ご依頼時の参考になれば幸いです。
+  </p>
 
-  <!-- サイドバー（タスク一覧） -->
-  <div class="sidebar" id="sidebar">
-    <h2>📝 タスク一覧</h2>
-<h3>🔷 構成・シナリオ</h3>
-<ul>
-  <li>PV全体構成メモ作成（尺、カット割り、キャッチコピー）</li>
-  <li>ナレーション台本ドラフト作成</li>
-  <li>ナレーション台本ブラッシュアップ</li>
-</ul>
+  <hr>
 
-<h3>🔷 素材準備</h3>
-<ul>
-  <li>PV使用Live2Dキャラクターリスト作成（ウィンク表情差分含む）</li>
-  <li>PV使用背景素材リストアップ</li>
-  <li>PV背景素材収集（既存 or 仮差し込み）</li>
-</ul>
+  <div class="filter-wrap">
+    <div class="tags">
+      <div class="tag-btn genre-btn" onclick="toggleTag(this)">ジングル</div>
+      <div class="tag-btn genre-btn" onclick="toggleTag(this)">BGM</div>
+      <div class="tag-btn genre-btn" onclick="toggleTag(this)">楽曲</div>
+    </div>
 
-<h3>🔷 音関連</h3>
-<ul>
-  <li>BGM候補選定</li>
-  <li>SE候補選定</li>
-  <li>PV BGM仮当てテスト</li>
-</ul>
-
-<h3>🔷 Live2D</h3>
-<ul>
-  <li>ウィンク立ち絵線画</li>
-  <li>ウィンク立ち絵塗り</li>
-  <li>ウィンクパーツ分け</li>
-  <li>ウィンクLive2Dモデリング</li>
-  <li>ウィンク表情差分作成（喜怒哀楽）</li>
-  <li>Live2D動作テスト</li>
-</ul>
-
-<h3>🔷 編集</h3>
-<ul>
-  <li>PV編集ソフトプロジェクト準備</li>
-  <li>PVコンテ作成</li>
-  <li>PV編集1st ver作成</li>
-  <li>ナレーション仮収録</li>
-  <li>PV演出エフェクト追加</li>
-  <li>PV編集最終チェック</li>
-  <li>PVサムネイル作成</li>
-</ul>
-
-<h3>🔷 公開準備</h3>
-<ul>
-  <li>公開告知文ドラフト作成</li>
-  <li>公開告知文ブラッシュアップ</li>
-  <li>公開告知画像素材準備</li>
-  <li>公開予約投稿設定</li>
-  <li>PV公開</li>
-</ul>
-
-<h3>💻 体験版（1章）タスク（8月後半〜）</h3>
-
-<h4>🔷 Live2D</h4>
-<ul>
-  <li>レック立ち絵線画</li>
-  <li>レック立ち絵塗り</li>
-  <li>レックパーツ分け</li>
-  <li>レックLive2Dモデリング</li>
-  <li>レック表情差分作成</li>
-</ul>
-
-<h4>🔷 シナリオ・演出</h4>
-<ul>
-  <li>1章テキスト最終調整</li>
-  <li>1章チュートリアル仕様確認</li>
-  <li>瞬きギミック仕様書作成</li>
-  <li>瞬きギミック仮実装</li>
-  <li>瞬きギミック動作テスト</li>
-</ul>
-
-<h4>🔷 UI</h4>
-<ul>
-  <li>UIデザインドラフト作成</li>
-  <li>UIパーツ制作</li>
-  <li>UI配置テスト</li>
-</ul>
-
-<h4>🔷 テストプレイ</h4>
-<ul>
-  <li>体験版通しテスト1回目</li>
-  <li>バグ修正</li>
-  <li>テストプレイヤー募集</li>
-  <li>フィードバック対応</li>
-</ul>
-
-<h4>🔷 公開準備</h4>
-<ul>
-  <li>体験版公開ページ作成（itch.ioなど）</li>
-  <li>スクリーンショット撮影</li>
-  <li>公開告知投稿作成</li>
-</ul>  </div>
-
-  <!-- メイン（カレンダー） -->
-  <div class="main">
-   <h2>📅 カレンダー</h2>
-
-<h3>✅ 7月</h3>
-
-<h4>7/11（金）</h4>
-<ul>
-  <li>PV全体構成メモ作成</li>
-  <li>ナレーション台本ドラフト作成</li>
-</ul>
-
-<h4>7/12（土）</h4>
-<ul>
-  <li>ナレーション台本ブラッシュアップ</li>
-  <li>PV使用Live2Dキャラクターリスト作成</li>
-</ul>
-
-<h4>7/13（日）</h4>
-<ul>
-  <li>PV使用背景素材リストアップ</li>
-  <li>PV背景素材収集</li>
-</ul>
-
-<h4>7/14（月）</h4>
-<ul>
-  <li>BGM候補選定</li>
-  <li>SE候補選定</li>
-</ul>
-
-<h4>7/15（火）</h4>
-<ul>
-  <li>PV BGM仮当てテスト</li>
-</ul>
-
-<h4>7/16（水）</h4>
-<ul>
-  <li>PV編集ソフトプロジェクト準備</li>
-</ul>
-
-<h4>7/17（木）</h4>
-<ul>
-  <li>ウィンク立ち絵線画</li>
-</ul>
-
-<h4>7/18（金）</h4>
-<ul>
-  <li>ウィンク立ち絵塗り</li>
-</ul>
-
-<h4>7/19（土）</h4>
-<ul>
-  <li>ウィンクパーツ分け</li>
-</ul>
-
-<h4>7/20（日）</h4>
-<ul>
-  <li>ウィンクLive2Dモデリング</li>
-</ul>
-
-<h4>7/21（月）</h4>
-<ul>
-  <li>ウィンク表情差分作成</li>
-</ul>
-
-<h4>7/22（火）</h4>
-<ul>
-  <li>Live2D動作テスト</li>
-</ul>
-
-<h4>7/23（水）</h4>
-<ul>
-  <li>PVコンテ作成</li>
-</ul>
-
-<h4>7/24（木）</h4>
-<ul>
-  <li>PV編集1st ver作成</li>
-</ul>
-
-<h4>7/25（金）〜7/29（火）県外滞在</h4>
-<ul>
-  <li>（タスクなし）</li>
-</ul>
-
-<h4>7/30（水）</h4>
-<ul>
-  <li>PV演出エフェクト追加</li>
-</ul>
-
-<h4>7/31（木）</h4>
-<ul>
-  <li>PV編集最終チェック</li>
-</ul>
-
-<h3>✅ 8月</h3>
-
-<h4>8/1（金）</h4>
-<ul>
-  <li>ナレーション仮収録</li>
-</ul>
-
-<h4>8/2（土）</h4>
-<ul>
-  <li>PVサムネイル作成</li>
-</ul>
-
-<h4>8/3（日）</h4>
-<ul>
-  <li>公開告知文ドラフト作成</li>
-</ul>
-
-<h4>8/4（月）</h4>
-<ul>
-  <li>公開告知文ブラッシュアップ</li>
-</ul>
-
-<h4>8/5（火）</h4>
-<ul>
-  <li>公開告知画像素材準備</li>
-</ul>
-
-<h4>8/6（水）</h4>
-<ul>
-  <li>公開予約投稿設定</li>
-</ul>
-
-<h4>8/7（木）</h4>
-<ul>
-  <li>PV公開</li>
-</ul>
-
-<h4>8/8（金）</h4>
-<ul>
-  <li>レック立ち絵線画</li>
-</ul>
-
-<h4>8/9（土）</h4>
-<ul>
-  <li>レック立ち絵塗り</li>
-</ul>
-
-<h4>8/10（日）</h4>
-<ul>
-  <li>レックパーツ分け</li>
-</ul>
-
-<h4>8/11（月）</h4>
-<ul>
-  <li>レックLive2Dモデリング</li>
-</ul>
-
-<h4>8/12（火）</h4>
-<ul>
-  <li>レック表情差分作成</li>
-</ul>
-
-<h4>8/13（水）</h4>
-<ul>
-  <li>1章テキスト最終調整</li>
-</ul>
-
-<h4>8/14（木）</h4>
-<ul>
-  <li>1章チュートリアル仕様確認</li>
-</ul>
-
-<h4>8/15（金）</h4>
-<ul>
-  <li>瞬きギミック仕様書作成</li>
-</ul>
-
-<h4>8/16（土）</h4>
-<ul>
-  <li>瞬きギミック仮実装</li>
-</ul>
-
-<h4>8/17（日）</h4>
-<ul>
-  <li>瞬きギミック動作テスト</li>
-</ul>
-
-<h4>8/18（月）</h4>
-<ul>
-  <li>UIデザインドラフト作成</li>
-</ul>
-
-<h4>8/19（火）</h4>
-<ul>
-  <li>UIパーツ制作</li>
-</ul>
-
-<h4>8/20（水）</h4>
-<ul>
-  <li>UI配置テスト</li>
-</ul>
-
-<h4>8/21（木）</h4>
-<ul>
-  <li>体験版通しテスト1回目</li>
-</ul>
-
-<h4>8/22（金）</h4>
-<ul>
-  <li>バグ修正</li>
-</ul>
-
-<h4>8/23（土）</h4>
-<ul>
-  <li>テストプレイヤー募集</li>
-</ul>
-
-<h4>8/24（日）</h4>
-<ul>
-  <li>フィードバック対応</li>
-</ul>
-
-<h4>8/25（月）</h4>
-<ul>
-  <li>体験版公開ページ作成</li>
-</ul>
-
-<h4>8/26（火）〜8/31（日）</h4>
-<ul>
-  <li>（予備日、調整日、追加作業・休息日に設定）</li>
-</ul>
+    <div class="tags">
+      <div class="tag-btn" onclick="toggleTag(this)">可愛い</div>
+      <div class="tag-btn" onclick="toggleTag(this)">明るい</div>
+      <div class="tag-btn" onclick="toggleTag(this)">楽しい</div>
+      <div class="tag-btn" onclick="toggleTag(this)">優しい</div>
+      <div class="tag-btn" onclick="toggleTag(this)">切ない</div>
+      <div class="tag-btn" onclick="toggleTag(this)">カッコいい</div>
+      <div class="tag-btn" onclick="toggleTag(this)">ピアノ</div>
+      <div class="tag-btn" onclick="toggleTag(this)">ポップ</div>
+      <br>
+      <div class="tag-btn" onclick="toggleTag(this)">和風</div>
+      <div class="tag-btn" onclick="toggleTag(this)">自然</div>
+      <div class="tag-btn" onclick="toggleTag(this)">不穏</div>
+      <div class="tag-btn" onclick="toggleTag(this)">幻想的</div>
+      <div class="tag-btn" onclick="toggleTag(this)">不思議</div>
+      <div class="tag-btn" onclick="toggleTag(this)">アンニュイ</div>
+      <div class="tag-btn" onclick="toggleTag(this)">リラックス</div>
+      <div class="tag-btn" onclick="toggleTag(this)">物語調</div>
+    </div>
   </div>
 
-  <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
-  </script>
+  <div class="grid" id="trackGrid">
+    <div class="track" data-tags="明るい 優しい 可愛い 自然 和風 幻想的 ジングル リラックス" onclick="playTrack('hamupi-')">
+      <div class="thumb thumb-1">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">潮に咲く</div>
+      <span class="duration"></span>
+      <audio id="hamupi-" src="music/hamupi-.mp3"></audio>
+    </div>
 
+    <div class="track" data-tags="ジングル カッコいい 楽しい" onclick="playTrack('ddd')">
+      <div class="thumb thumb-2">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">ラジオマン</div>
+      <span class="duration"></span>
+      <audio id="ddd" src="music/ddd.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="明るい 楽しい 可愛い ポップ ジングル" onclick="playTrack('jikiru')">
+      <div class="thumb thumb-3">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">EVOLUTION！</div>
+      <span class="duration"></span>
+      <audio id="jikiru" src="music/jikiru.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 可愛い ピアノ ポップ リラックス 優しい" onclick="playTrack('sunatumino')">
+      <div class="thumb thumb-4">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">つみあげサンド</div>
+      <span class="duration"></span>
+      <audio id="sunatumino" src="music/sunatumino.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="優しい 切ない 自然 和風 ジングル ピアノ 物語調" onclick="playTrack('hirata')">
+      <div class="thumb thumb-5">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">邂逅</div>
+      <span class="duration"></span>
+      <audio id="hirata" src="music/hirata.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="幻想的 自然 優しい" onclick="playTrack('kirakira_snow')">
+      <div class="thumb thumb-6">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">オーロラ紀行</div>
+      <span class="duration"></span>
+      <audio id="kirakira_snow" src="music/kirakira_snow.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 優しい ピアノ 幻想的 リラックス 不思議" onclick="playTrack('piano_flute')">
+      <div class="thumb thumb-7">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">モズとフルート</div>
+      <span class="duration"></span>
+      <audio id="piano_flute" src="music/piano_flute.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 楽しい カッコいい ポップ" onclick="playTrack('sakuya')">
+      <div class="thumb thumb-8">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">Howl Spice</div>
+      <span class="duration"></span>
+      <audio id="sakuya" src="music/sakuya.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 楽しい 可愛い ポップ" onclick="playTrack('juna')">
+      <div class="thumb thumb-9">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">サイバー×<br>キャンディ</div>
+      <span class="duration"></span>
+      <audio id="juna" src="music/juna.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 優しい 可愛い 和風 自然" onclick="playTrack('suiren')">
+      <div class="thumb thumb-10">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">水悠歌</div>
+      <span class="duration"></span>
+      <audio id="suiren" src="music/suiren.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 切ない 優しい ピアノ 物語調" onclick="playTrack('taketa')">
+      <div class="thumb thumb-11">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">禁断の果実</div>
+      <span class="duration"></span>
+      <audio id="taketa" src="music/taketa.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 優しい 和風" onclick="playTrack('wafu_yuttari')">
+      <div class="thumb thumb-12">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">晴る風</div>
+      <span class="duration"></span>
+      <audio id="wafu_yuttari" src="music/wafu_yuttari.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 楽しい 可愛い ピアノ ポップ リラックス" onclick="playTrack('My Fleek Day')">
+      <div class="thumb thumb-1">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">My Fleek Day</div>
+      <span class="duration"></span>
+      <audio id="My Fleek Day" src="music/My Fleek Day.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="楽しい カッコいい 明るい ジングル" onclick="playTrack('kaijo')">
+      <div class="thumb thumb-2">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">ブルーパンサー</div>
+      <span class="duration"></span>
+      <audio id="kaijo" src="music/kaijo.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 優しい 可愛い ピアノ 和風" onclick="playTrack('yuiri')">
+      <div class="thumb thumb-3">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">ころりんキャッチ</div>
+      <span class="duration"></span>
+      <audio id="yuiri" src="music/yuiri.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 明るい 優しい 可愛い ピアノ 楽しい" onclick="playTrack('nono')">
+      <div class="thumb thumb-4">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">Rizzy Me!</div>
+      <span class="duration"></span>
+      <audio id="nono" src="music/nono.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="ジングル 不穏 優しい 切ない ピアノ アンニュイ 不思議" onclick="playTrack('meio')">
+      <div class="thumb thumb-5">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">皇の休日</div>
+      <span class="duration"></span>
+      <audio id="meio" src="music/meio.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 幻想的 可愛い 優しい 切ない リラックス" onclick="playTrack('ra-na1')">
+      <div class="thumb thumb-6">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">Aether</div>
+      <span class="duration"></span>
+      <audio id="ra-na1" src="music/ra-na1.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 優しい 楽しい ピアノ ポップ 可愛い 自然" onclick="playTrack('ra-na2')">
+      <div class="thumb thumb-7">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">COTTONTAIL</div>
+      <span class="duration"></span>
+      <audio id="ra-na2" src="music/ra-na2.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 優しい 楽しい ピアノ ポップ 可愛い 自然" onclick="playTrack('memememe_1')">
+      <div class="thumb thumb-8">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">SETTING…</div>
+      <span class="duration"></span>
+      <audio id="memememe_1" src="music/memememe_1.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 優しい 楽しい ピアノ ポップ 可愛い 自然" onclick="playTrack('memememe_2')">
+      <div class="thumb thumb-9">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">BOOTING!!</div>
+      <span class="duration"></span>
+      <audio id="memememe_2" src="music/memememe_2.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 優しい 楽しい ピアノ ポップ 可愛い" onclick="playTrack('somari1')">
+      <div class="thumb thumb-10">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">ひだまり喫茶きゃんべる</div>
+      <span class="duration"></span>
+      <audio id="somari1" src="music/somari1.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 楽しい ピアノ ポップ 可愛い" onclick="playTrack('somari2')">
+      <div class="thumb thumb-11">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">今日も喫茶店は大忙しなのだ！</div>
+      <span class="duration"></span>
+      <audio id="somari2" src="music/somari2.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 切ない カッコいい ピアノ 不穏 幻想的 アンニュイ 物語調 自然" onclick="playTrack('arajiru')">
+      <div class="thumb thumb-12">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">再開と終焉</div>
+      <span class="duration"></span>
+      <audio id="arajiru" src="music/arajiru.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 切ない カッコいい 不穏 楽しい アンニュイ 物語調" onclick="playTrack('arajiru_kaito')">
+      <div class="thumb thumb-1">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">Catch Me If You Dare</div>
+      <span class="duration"></span>
+      <audio id="arajiru_kaito" src="music/arajiru_kaito.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM カッコいい 不穏 幻想的 不思議 アンニュイ 物語調" onclick="playTrack('arajiru_huon')">
+      <div class="thumb thumb-2">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">骸</div>
+      <span class="duration"></span>
+      <audio id="arajiru_huon" src="music/arajiru_huon.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 明るい 楽しい 可愛い ポップ" onclick="playTrack('27')">
+      <div class="thumb thumb-3">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">ポッピンラビッツ</div>
+      <span class="duration"></span>
+      <audio id="27" src="music/27.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="明るい 楽しい ポップ 和風 BGM リラックス" onclick="playTrack('miyabi')">
+      <div class="thumb thumb-4">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">なごみ<br>フューチャー</div>
+      <span class="duration"></span>
+      <audio id="miyabi" src="music/miyabi.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 楽しい ポップ 和風 不穏" onclick="playTrack('yoreisai')">
+      <div class="thumb thumb-5">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">和風ハロウィン<br>BGM</div>
+      <span class="duration"></span>
+      <audio id="yoreisai" src="music/yoreisai.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="BGM 楽曲 可愛い 優しい 明るい 楽しい ピアノ ポップ リラックス" onclick="playTrack('osanpo')">
+      <div class="thumb thumb-6">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">おさんぽ日和</div>
+      <span class="duration"></span>
+      <audio id="osanpo" src="music/osanpo.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="楽曲 明るい 優しい 楽しい 可愛い ピアノ ポップ 物語調 リラックス" onclick="playTrack('sister_off')">
+      <div class="thumb thumb-7">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">シスターエール（off）</div>
+      <span class="duration"></span>
+      <audio id="sister_off" src="music/sister_off.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="楽曲 明るい 楽しい 可愛い ポップ" onclick="playTrack('cheese2025')">
+      <div class="thumb thumb-8">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">cheese</div>
+      <span class="duration"></span>
+      <audio id="cheese2025" src="music/cheese2025.mp3"></audio>
+    </div>
+
+    <div class="track" data-tags="楽曲 明るい 優しい 楽しい ピアノ ポップ 可愛い" onclick="playTrack('kampana')">
+      <div class="thumb thumb-9">
+        <span class="play-btn"></span>
+        <span class="playing-animation"></span>
+      </div>
+      <div class="track-title">campana</div>
+      <span class="duration"></span>
+      <audio id="kampana" src="music/kampana.mp3"></audio>
+    </div>
+  </div>
+
+  <div class="link-buttons">
+    <a href="https://tsunagu.cloud/users/nar8ran" target="_blank" class="commission">コミッションはこちら</a>
+    <a href="https://lit.link/nar8ran" target="_blank" class="main-site">メインサイトはこちら</a>
+  </div>
+
+  <footer>
+    © 2025 Naro studio. All rights reserved.
+  </footer>
+
+  <script>
+    const selectedTags = [];
+    let currentAudio = null;
+    let currentTrackDiv = null;
+
+    function playTrack(id) {
+      const audio = document.getElementById(id);
+      const trackDiv = audio.closest('.track');
+      const anim = trackDiv.querySelector('.playing-animation');
+
+      if (currentAudio === audio) {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+          trackDiv.classList.remove('playing');
+          if (anim) anim.style.display = 'none';
+          currentAudio = null;
+          currentTrackDiv = null;
+        } else {
+          audio.play();
+          trackDiv.classList.add('playing');
+          if (anim) anim.style.display = 'inline-block';
+          currentAudio = audio;
+          currentTrackDiv = trackDiv;
+        }
+      } else {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          if (currentTrackDiv) {
+            currentTrackDiv.classList.remove('playing');
+            const prevAnim = currentTrackDiv.querySelector('.playing-animation');
+            if (prevAnim) prevAnim.style.display = 'none';
+          }
+        }
+        audio.play();
+        trackDiv.classList.add('playing');
+        if (anim) anim.style.display = 'inline-block';
+        currentAudio = audio;
+        currentTrackDiv = trackDiv;
+      }
+    }
+
+    function toggleTag(btn) {
+      const tag = btn.textContent.trim();
+      if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        const index = selectedTags.indexOf(tag);
+        if (index > -1) selectedTags.splice(index, 1);
+      } else {
+        btn.classList.add('active');
+        selectedTags.push(tag);
+      }
+      filterTracks();
+    }
+
+    function filterTracks() {
+      const tracks = document.getElementsByClassName('track');
+      for (let i = 0; i < tracks.length; i++) {
+        const tags = tracks[i].getAttribute('data-tags').split(' ');
+        const hasAll = selectedTags.every(t => tags.includes(t));
+        tracks[i].style.display = hasAll || selectedTags.length === 0 ? '' : 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const tracks = document.querySelectorAll('.track');
+
+      tracks.forEach(track => {
+        const audio = track.querySelector('audio');
+        const durationSpan = track.querySelector('.duration');
+
+        audio.addEventListener('loadedmetadata', () => {
+          const duration = audio.duration;
+          const minutes = Math.floor(duration / 60);
+          const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+          durationSpan.textContent = `${minutes}:${seconds}`;
+        });
+
+        audio.addEventListener('ended', () => {
+          track.classList.remove('playing');
+          const anim = track.querySelector('.playing-animation');
+          if (anim) anim.style.display = 'none';
+          if (currentAudio === audio) {
+            currentAudio = null;
+            currentTrackDiv = null;
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
