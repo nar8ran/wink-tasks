@@ -163,10 +163,9 @@
       box-shadow: var(--card-shadow-hover);
     }
 
-    .track.playing {
-      outline: 2px solid #ffd66b;
-      outline-offset: 0;
-    }
+.track.playing {
+  outline: 2px solid #ffd84d;
+}
 
     .thumb {
       width: 100%;
@@ -227,18 +226,18 @@
       letter-spacing: 0.02em;
     }
 
-    .playing-animation {
-      display: none;
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #8ddc84;
-      animation: blink 1s infinite;
-      box-shadow: 0 0 0 6px rgba(141, 220, 132, 0.14);
-    }
+   .playing-animation {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffd84d; /* 黄色 */
+  animation: blink 1s infinite;
+  box-shadow: 0 0 0 6px rgba(255, 216, 77, 0.25); /* 光も黄色 */
+}
 
     @keyframes blink {
       0%, 50%, 100% { opacity: 1; }
