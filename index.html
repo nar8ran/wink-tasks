@@ -8,6 +8,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
+.divider-bar {
+  position: relative;
+  width: min(640px, calc(100% - 64px));
+  height: 4px;
+  margin: 28px auto 34px;
+  background: #d8dde5;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+@keyframes gradient-flow {
+  0% { left: -140%; }
+  50% { left: 100%; }
+  100% { left: -140%; }
+}
+
+.divider-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 140%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    #ffb3d9,
+    #ffd966,
+    #8dcc66,
+    #66d9ff,
+    #cc99ff
+  );
+  border-radius: 9999px;
+  animation: gradient-flow 8s ease-in-out infinite;
+}    
     :root {
       --bg: #f8f8f8;
       --text: #2f3443;
@@ -47,15 +81,6 @@
       font-size: 15px;
       line-height: 1.95;
       color: #4f5668;
-    }
-
-    hr {
-      border: none;
-      height: 4px;
-      width: min(640px, calc(100% - 64px));
-      background: #d8dde5;
-      margin: 28px auto 34px;
-      border-radius: 999px;
     }
 
     .filter-wrap {
@@ -307,46 +332,46 @@
     }
 
     @media (max-width: 760px) {
-      body {
-        padding: 32px 16px 140px;
-      }
+  body {
+    padding: 32px 16px 140px;
+  }
 
-      h1 {
-        font-size: 42px;
-      }
+  h1 {
+    font-size: 42px;
+  }
 
-      .caption {
-        font-size: 14px;
-      }
+  .caption {
+    font-size: 14px;
+  }
 
-      hr {
-        width: calc(100% - 24px);
-      }
+  .divider-bar {
+    width: calc(100% - 24px);
+  }
 
-      .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-        width: 100%;
-      }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+  }
 
-      .track {
-        width: 100%;
-      }
+  .track {
+    width: 100%;
+  }
 
-      .filter-wrap {
-        border-radius: 20px;
-      }
+  .filter-wrap {
+    border-radius: 20px;
+  }
 
-      .tag-btn {
-        font-size: 14px;
-        min-height: 40px;
-        padding: 8px 14px;
-      }
+  .tag-btn {
+    font-size: 14px;
+    min-height: 40px;
+    padding: 8px 14px;
+  }
 
-      .genre-btn {
-        min-width: 84px;
-      }
-    }
+  .genre-btn {
+    min-width: 84px;
+  }
+}
 
     @media (max-width: 520px) {
       .grid {
@@ -372,7 +397,7 @@
     タグ検索機能もございますので、ご依頼時の参考になれば幸いです。
   </p>
 
-  <hr>
+<div class="divider-bar"></div>
 
   <div class="filter-wrap">
     <div class="tags">
