@@ -8,54 +8,43 @@
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
-    
-.divider-bar {
-  position: relative;
-  width: min(640px, calc(100% - 64px));
-  height: 4px;
-  margin: 28px auto 34px;
-  background: #d8dde5;
-  border-radius: 9999px;
-  overflow: hidden;
-}
+    .divider-bar {
+      position: relative;
+      width: min(640px, calc(100% - 64px));
+      height: 4px;
+      margin: 28px auto 34px;
+      background: #d8dde5;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
 
-@keyframes gradient-flow {
-  0% {
-    left: -140%;
-  }
-  18.75% {
-    left: 100%;
-  }
-  50% {
-    left: 100%;
-  }
-  68.75% {
-    left: -140%;
-  }
-  100% {
-    left: -140%;
-  }
-}
+    @keyframes gradient-flow {
+      0% { left: -140%; }
+      18.75% { left: 100%; }
+      50% { left: 100%; }
+      68.75% { left: -140%; }
+      100% { left: -140%; }
+    }
 
-.divider-bar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -140%;
-  width: 140%;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    #ffb3d9,
-    #ffd966,
-    #8dcc66,
-    #66d9ff,
-    #cc99ff
-  );
-  border-radius: 9999px;
-  animation: gradient-flow 16s ease-in-out infinite;
-}    
-    
+    .divider-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -140%;
+      width: 140%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        #ffb3d9,
+        #ffd966,
+        #8dcc66,
+        #66d9ff,
+        #cc99ff
+      );
+      border-radius: 9999px;
+      animation: gradient-flow 16s ease-in-out infinite;
+    }
+
     :root {
       --bg: #f8f8f8;
       --text: #2f3443;
@@ -75,7 +64,7 @@
       font-family: 'M PLUS 1p', sans-serif;
       background: var(--bg);
       margin: 0;
-      padding: 44px 24px 120px;
+      padding: 44px 24px 140px;
       text-align: center;
       color: var(--text);
     }
@@ -177,9 +166,9 @@
       box-shadow: var(--card-shadow-hover);
     }
 
-.track.playing {
-  outline: 2px solid #ffd84d;
-}
+    .track.playing {
+      outline: 2px solid #ffd84d;
+    }
 
     .thumb {
       width: 100%;
@@ -194,6 +183,7 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-color: #eef3f9;
     }
 
     .play-btn {
@@ -232,26 +222,24 @@
 
     .duration {
       display: block;
-      position: static;
-      transform: none;
       margin-top: 8px;
       font-size: 14px;
       color: var(--muted);
       letter-spacing: 0.02em;
     }
 
-   .playing-animation {
-  display: none;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ffd84d; /* 黄色 */
-  animation: blink 1s infinite;
-  box-shadow: 0 0 0 6px rgba(255, 216, 77, 0.25); /* 光も黄色 */
-}
+    .playing-animation {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffd84d;
+      animation: blink 1s infinite;
+      box-shadow: 0 0 0 6px rgba(255, 216, 77, 0.25);
+    }
 
     @keyframes blink {
       0%, 50%, 100% { opacity: 1; }
@@ -278,19 +266,23 @@
     .link-buttons {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 12px;
       position: fixed;
       bottom: 62px;
       left: 50%;
       transform: translateX(-50%);
       width: auto;
+      max-width: calc(100% - 24px);
       z-index: 10;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       padding: 0 16px;
     }
 
     .link-buttons a {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 10px 18px;
       border-radius: 999px;
       text-decoration: none;
@@ -298,6 +290,7 @@
       color: white;
       box-shadow: 0 6px 16px rgba(0,0,0,0.16);
       font-size: 14px;
+      white-space: nowrap;
     }
 
     .link-buttons a.commission {
@@ -321,11 +314,15 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: #dfe3ea;
-      color: #555; 
+      background: rgba(223, 227, 234, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+      color: #5d6678;
       padding: 10px 0;
       font-size: 14px;
       z-index: 9;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
     }
 
     @media (max-width: 1240px) {
@@ -345,59 +342,94 @@
     }
 
     @media (max-width: 760px) {
-  body {
-    padding: 32px 16px 140px;
-  }
+      body {
+        padding: 32px 16px 140px;
+      }
 
-  h1 {
-    font-size: 42px;
-  }
+      h1 {
+        font-size: 42px;
+      }
 
-  .caption {
-    font-size: 14px;
-  }
+      .caption {
+        font-size: 14px;
+      }
 
-  .divider-bar {
-    width: calc(100% - 24px);
-  }
+      .divider-bar {
+        width: calc(100% - 24px);
+      }
 
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    width: 100%;
-  }
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        width: 100%;
+      }
 
-  .track {
-    width: 100%;
-  }
+      .track {
+        width: 100%;
+      }
 
-  .filter-wrap {
-    border-radius: 20px;
-  }
+      .filter-wrap {
+        border-radius: 20px;
+      }
 
-  .tag-btn {
-    font-size: 14px;
-    min-height: 40px;
-    padding: 8px 14px;
-  }
+      .tag-btn {
+        font-size: 14px;
+        min-height: 40px;
+        padding: 8px 14px;
+      }
 
-  .genre-btn {
-    min-width: 84px;
-  }
-}
+      .genre-btn {
+        min-width: 84px;
+      }
+    }
 
     @media (max-width: 520px) {
+      body {
+        padding: 32px 16px 140px;
+      }
+
       .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        width: 100%;
+      }
+
+      .track {
+        width: 100%;
+        padding: 12px 12px 16px;
+      }
+
+      .thumb {
+        border-radius: 16px;
       }
 
       .track-title {
         min-height: auto;
+        font-size: 15px;
+        line-height: 1.5;
       }
 
       .link-buttons {
-        bottom: 72px;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
         gap: 10px;
+        width: calc(100% - 24px);
+        max-width: 520px;
+        bottom: 72px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0;
+      }
+
+      .link-buttons a {
+        flex: 1;
+        min-width: 0;
+        font-size: 12px;
+        padding: 10px 8px;
+        white-space: nowrap;
+        text-align: center;
       }
     }
   </style>
@@ -410,7 +442,7 @@
     タグ検索機能もございますので、ご依頼時の参考になれば幸いです。
   </p>
 
-<div class="divider-bar"></div>
+  <div class="divider-bar"></div>
 
   <div class="filter-wrap">
     <div class="tags">
@@ -439,8 +471,9 @@
       <div class="tag-btn" onclick="toggleTag(this)">物語調</div>
     </div>
   </div>
-
-  <div class="track" data-tags="BGM 明るい 楽しい 可愛い ポップ" onclick="playTrack('27')">
+  
+  <div class="grid" id="trackGrid">
+    <div class="track" data-tags="BGM 明るい 楽しい 可愛い ポップ" onclick="playTrack('27')">
       <div class="thumb" style="background-image: url('images/a9_cd.png');">
         <span class="play-btn"></span>
         <span class="playing-animation"></span>
