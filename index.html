@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
+    
 .divider-bar {
   position: relative;
   width: min(640px, calc(100% - 64px));
@@ -20,24 +21,21 @@
 
 @keyframes gradient-flow {
   0% {
-    left: -100%;    /* 左側で待機 */
+    left: -140%;
   }
   18.75% {
-    left: 100%;     /* 左→右へ3秒で移動 */
+    left: 100%;
   }
   50% {
-    left: 100%;     /* 右側で5秒待機 */
+    left: 100%;
   }
   68.75% {
-    left: -100%;    /* 右→左へ3秒で移動 */
+    left: -140%;
   }
   100% {
-    left: -100%;    /* 左側で5秒待機 */
+    left: -140%;
   }
 }
-
-/* アニメーション全体で16秒 */
-animation: gradient-flow 16s ease-in-out infinite;
 
 .divider-bar::before {
   content: '';
@@ -55,8 +53,9 @@ animation: gradient-flow 16s ease-in-out infinite;
     #cc99ff
   );
   border-radius: 9999px;
-  animation: gradient-flow 8s ease-in-out infinite;
+  animation: gradient-flow 16s ease-in-out infinite;
 }    
+    
     :root {
       --bg: #f8f8f8;
       --text: #2f3443;
